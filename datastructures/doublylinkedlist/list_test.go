@@ -151,7 +151,7 @@ func TestList_Find(t *testing.T) {
 
 	list.FromIntArray([]int{1, 2, 3})
 	assert.Nil(t, list.Find(4))
-	assert.Equal(t, 1, list.Find(1))
+	assert.Equal(t, 1, list.Find(1).Value())
 }
 
 func TestList_Traverse(t *testing.T) {

@@ -2,17 +2,23 @@ package doublylinkedlist
 
 import (
 	"fmt"
+	"github.com/herobs/algorithms-in-go/datastructures"
 	"strings"
 )
 
 // TraverseFunc list traverse function
 type TraverseFunc = func(interface{})
 
+// TraverseFunc Find/Delete callback
+type CallbackFunc = func(interface{}) bool
+
 // List doubly linked list
 type List struct {
 	head *Node
 	tail *Node
 }
+
+var _ datastructures.List = New()
 
 // New create new list
 func New() *List {
@@ -44,7 +50,7 @@ func (list *List) Append(value interface{}) {
 }
 
 // Delete first value from list
-func (list *List) Delete(value interface{}) interface{} {
+func (list *List) Delete(value interface{}) datastructures.Node {
 	if list.head == nil {
 		return nil
 	}
@@ -53,7 +59,6 @@ func (list *List) Delete(value interface{}) interface{} {
 		if curr.value == value {
 			if curr == list.head {
 				list.head = curr.next
-
 				if list.head != nil {
 					list.head.prev = nil
 				} else {
@@ -67,7 +72,7 @@ func (list *List) Delete(value interface{}) interface{} {
 				curr.next.prev = curr.prev
 			}
 
-			return curr.value
+			return curr
 		}
 	}
 
@@ -77,15 +82,14 @@ func (list *List) Delete(value interface{}) interface{} {
 // DeleteAll delete all from list
 func (list *List) DeleteAll(value interface{}) {
 	for {
-		deleted := list.Delete(value)
-		if deleted == nil {
+		if deleted := list.Delete(value); deleted == nil {
 			break
 		}
 	}
 }
 
 // DeleteHead delete head node from list
-func (list *List) DeleteHead() interface{} {
+func (list *List) DeleteHead() datastructures.Node {
 	if list.head == nil {
 		return nil
 	}
@@ -98,11 +102,11 @@ func (list *List) DeleteHead() interface{} {
 		list.head.prev = nil
 	}
 
-	return deleted.value
+	return deleted
 }
 
 // DeleteTail delete tail node from list
-func (list *List) DeleteTail() interface{} {
+func (list *List) DeleteTail() datastructures.Node {
 	if list.tail == nil {
 		return nil
 	}
@@ -115,7 +119,7 @@ func (list *List) DeleteTail() interface{} {
 		list.tail.next = nil
 	}
 
-	return deleted.value
+	return deleted
 }
 
 // Reverse list in place
@@ -138,14 +142,20 @@ func (list *List) Reverse() {
 }
 
 // Find first value in list
-func (list *List) Find(value interface{}) interface{} {
+func (list *List) Find(value interface{}, callback ...CallbackFunc) datastructures.Node {
 	if list.head == nil {
 		return nil
 	}
 
 	for curr := list.head; curr != nil; curr = curr.next {
-		if curr.value == value {
-			return curr.value
+		if len(callback) > 0 {
+			if callback[0](curr.value) {
+				return curr
+			}
+		} else {
+			if curr.value == value {
+				return curr
+			}
 		}
 	}
 
@@ -175,31 +185,31 @@ func (list *List) FromIntArray(values []int) {
 }
 
 // ToArray get array of nodes form list
-func (list *List) ToArray() []interface{} {
-	values := make([]interface{}, 0)
+func (list *List) ToArray() []datastructures.Node {
+	nodes := make([]datastructures.Node, 0)
 	for curr := list.head; curr != nil; curr = curr.next {
-		values = append(values, curr)
+		nodes = append(nodes, curr)
 	}
 
-	return values
+	return nodes
 }
 
 // Head get head node
-func (list *List) Head() interface{} {
+func (list *List) Head() datastructures.Node {
 	if list.head == nil {
 		return nil
-	} else {
-		return list.head.value
 	}
+
+	return list.head
 }
 
 // Tail get tail value
-func (list *List) Tail() interface{} {
+func (list *List) Tail() datastructures.Node {
 	if list.tail == nil {
 		return nil
-	} else {
-		return list.tail.value
 	}
+
+	return list.tail
 }
 
 // Len get the length of list

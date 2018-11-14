@@ -22,9 +22,13 @@ func (queue *Queue) IsEmpty() bool {
 	return queue.list.Head() == nil
 }
 
-// Peek get the top value without removing
+// Peek get the bottom value without removing
 func (queue Queue) Peek() interface{} {
-	return queue.list.Head()
+	if node := queue.list.Head(); node != nil {
+		return node.Value()
+	}
+
+	return nil
 }
 
 // Enqueue add value on the top
@@ -32,9 +36,13 @@ func (queue *Queue) Enqueue(value interface{}) {
 	queue.list.Append(value)
 }
 
-// Dequeue remove the top value and return
+// Dequeue remove the bottom value and return
 func (queue *Queue) Dequeue() interface{} {
-	return queue.list.DeleteHead()
+	if node := queue.list.DeleteHead(); node != nil {
+		return node.Value()
+	}
+
+	return nil
 }
 
 // String implement Stringer

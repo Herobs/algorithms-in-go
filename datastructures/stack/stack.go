@@ -22,9 +22,13 @@ func (stack *Stack) IsEmpty() bool {
 	return stack.list.Head() == nil
 }
 
-// Peek get the bottom value without removing
+// Peek get the top value without removing
 func (stack *Stack) Peek() interface{} {
-	return stack.list.Tail()
+	if node := stack.list.Tail(); node != nil {
+		return node.Value()
+	}
+
+	return nil
 }
 
 // Push add value on the top
@@ -34,7 +38,10 @@ func (stack *Stack) Push(value interface{}) {
 
 // Pop remove the top value and return
 func (stack *Stack) Pop() interface{} {
-	return stack.list.DeleteTail()
+	if node := stack.list.DeleteTail(); node != nil {
+		return node.Value()
+	}
+	return nil
 }
 
 // String implement Stringer
